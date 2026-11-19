@@ -11,8 +11,6 @@ step through lessons 1-8 with the arrows on the lesson card. Edit each
 lesson's code and follow its "try this" exercises, watching the readout's
 measured numbers change.
 
-ANIMATOR EXTENSIONS: FRACTALS, A SURGICAL ROBOTICS LAB, AND A FINISHED WEBSITE
-
 Summary
 -------
 I extended Animator in three directions. First, new shapes that draw
