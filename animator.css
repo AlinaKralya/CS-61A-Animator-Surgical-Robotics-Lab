@@ -1,0 +1,751 @@
+/* All styling for the Animator app. Its code only attaches class names. */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+/* ── Shell: the header above the workspace ──────────────────────────────── */
+
+/* Each area has its own accent colour, used by the header, home screen, and
+   controls. */
+.shell {
+  --accent: #c9a85c;
+  --accent-soft: rgba(201, 168, 92, 0.16);
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a2e;
+}
+.shell.mode-surgery {
+  --accent: #4fd1c5;
+  --accent-soft: rgba(79, 209, 197, 0.14);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 40px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  background: #12122a;
+  border-bottom: 1px solid #3a3a5e;
+  font-family: system-ui, sans-serif;
+}
+.home-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+.home-btn:hover { background: var(--accent-soft); }
+.mode-tabs {
+  display: flex;
+  gap: 4px;
+  height: 100%;
+}
+.mode-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #a59bb3;
+  font-size: 13px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+.mode-tab:hover { color: #d4c5a0; }
+.mode-tab.active {
+  color: #f0e6cc;
+  border-bottom-color: var(--accent);
+}
+
+/* Controls pick up the area's accent. */
+.shell .control input[type="range"] { accent-color: var(--accent); }
+.shell .drawing-select { border-color: var(--accent); }
+
+/* ── Home screen ─────────────────────────────────────────────────────────── */
+
+.home {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(8, 8, 20, 0.94);
+  font-family: system-ui, sans-serif;
+  overflow: auto;
+}
+.home-inner {
+  width: min(960px, 100%);
+}
+.home-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.home h1 {
+  margin: 0;
+  color: #f0e6cc;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+.home-sub {
+  color: #9a8f78;
+  margin: 6px 0 20px;
+}
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: #16162e;
+  border: 1px solid #3a3a5e;
+  border-top: 3px solid var(--card-accent);
+  border-radius: 8px;
+  color: #d4c5a0;
+}
+.card-studio { --card-accent: #c9a85c; }
+.card-surgery { --card-accent: #4fd1c5; }
+.home-card h2 {
+  margin: 0;
+  color: var(--card-accent);
+  font-size: 20px;
+  font-weight: 500;
+}
+.home-card p { margin: 0; line-height: 1.5; }
+.home-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #9a8f78;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.home-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.home-link {
+  background: #222244;
+  border: 1px solid #3a3a5e;
+  border-radius: 12px;
+  color: #c8bca0;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+.home-link:hover { border-color: var(--card-accent); color: #f0e6cc; }
+.home-enter {
+  margin-top: auto;
+  align-self: flex-start;
+  background: var(--card-accent);
+  border: none;
+  border-radius: 4px;
+  color: #10101f;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+/* ── Layout: two columns ─────────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  width: 100%;
+  /* Fill the shell below its header. */
+  flex: 1;
+  min-height: 0;
+  background: #1a1a2e;
+  color: #d4c5a0;
+  font-family: system-ui, sans-serif;
+  font-size: 14px;
+}
+
+/* Left column: the code editor. */
+.code-col {
+  width: 42%;
+  min-width: 320px;
+  max-width: 720px;
+  flex-shrink: 0;
+  display: flex;
+  /* A lesson's card (in the lab) sits above the code. */
+  flex-direction: column;
+  border-right: 1px solid #3a3a5e;
+  background: #0f0f1e;
+}
+
+/* The code column stays in the DOM when collapsed, so CodeMirror keeps its
+   state; hiding it gives the right column the full width. */
+.app.code-hidden .code-col { display: none; }
+
+/* A small emoji button (the code pane's collapse toggle, and the playback
+   controls once they exist). */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a4a;
+  color: #d4c5a0;
+  border: 1px solid #4a4a8a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 5px 8px;
+}
+.icon-btn:hover { background: #3a3a5e; }
+
+/* ── Code panel (left column) ───────────────────────────────────────────── */
+
+.code-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #1a1a3e;
+  border-bottom: 1px solid #3a3a5e;
+}
+.code-title {
+  color: #e8d8b0;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+/* Wrapper holding the editor. */
+.code-editor-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+}
+/* CodeMirror mount node: grows to fill the panel. */
+.code-editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  background: #0d0d1a;
+}
+.code-editor .cm-editor { width: 100%; height: 100%; }
+
+/* Collapsible reference of the built-ins available to draw functions. */
+.reference {
+  margin: 8px 14px 0;
+  border: 1px solid #3a3a5e;
+  border-radius: 4px;
+  background: #0d0d1a;
+  overflow: hidden;
+}
+.reference-summary {
+  padding: 6px 12px;
+  cursor: pointer;
+  color: #b8a888;
+  font-family: monospace;
+  font-size: 12px;
+  user-select: none;
+}
+.reference-summary:hover { color: #e8d8b0; }
+.reference-body {
+  padding: 4px 12px 10px;
+  border-top: 1px solid #3a3a5e;
+}
+.reference-group { margin-top: 8px; }
+.reference-group-title {
+  color: #8a8aca;
+  font-family: monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.reference-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 1px 0;
+}
+.reference-sig {
+  color: #89ddff;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre;
+}
+.reference-desc { color: #8e9cab; font-size: 11px; }
+
+/* ── Animation area (right column) ──────────────────────────────────────── */
+
+.canvas-area {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  /* The stage (the drawing) above, the controls below it. */
+  flex-direction: column;
+  background: #0a0a14;
+}
+
+/* The space the drawing has: the canvas is the largest square that fits in it
+   (see .canvas, whose size is in units of this container). */
+.stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  container-type: size;
+}
+
+/* The interpreter's List(Path) (or its error), shown as text before the
+   animation pane is built. */
+.output {
+  align-self: stretch;
+  margin: 0;
+  padding: 16px;
+  overflow: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #cfe3ff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+/* Leave room for the reveal button, which only overlays this pane while the
+   code column is hidden. */
+.app.code-hidden .output { padding-top: 48px; }
+
+/* Button that reveals the code column again when it is hidden. */
+.reveal-code {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+}
+
+/* A centred square that fits the (possibly non-square) animation area. Give your
+   <canvas> this class, so that drawings aren't stretched. */
+.canvas {
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+}
+
+
+/* The error from the latest code, shown over the bottom of the animation while
+   the canvas keeps the last drawing that ran. */
+.error-box {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 10;
+  max-height: 40%;
+  overflow: auto;
+  padding: 10px 14px;
+  background: rgba(60, 16, 24, 0.92);
+  border: 1px solid #b04050;
+  border-radius: 4px;
+  color: #ffd0d6;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* The control bar along the bottom of the animation: play/pause, replay, and
+   the shape and speed sliders. */
+.controls {
+  flex-shrink: 0;
+  margin: 0 12px 12px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px 12px;
+  background: rgba(26, 26, 46, 0.9);
+  border: 1px solid #3a3a5e;
+  border-radius: 6px;
+}
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 180px;
+}
+.control input[type="range"] {
+  flex: 1;
+  min-width: 80px;
+  accent-color: #8a8aca;
+}
+.control-label {
+  color: #b8a888;
+  font-family: monospace;
+  font-size: 12px;
+}
+.control-value {
+  min-width: 3.5em;
+  text-align: right;
+  color: #e8d8b0;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* The drop-down that opens a saved drawing or creates a new one. */
+.drawing-select {
+  max-width: 180px;
+  padding: 4px 6px;
+  background: #2a2a4a;
+  color: #d4c5a0;
+  border: 1px solid #4a4a8a;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* The box the canvas sits in: always exactly the canvas's size and place
+   (the same size rule as .canvas), so overlays inside it can be positioned in
+   percentages of the canvas. */
+.canvas-frame {
+  position: relative;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  flex-shrink: 0;
+}
+
+/* The tremor filter's readout, in the top-right space the dashboard leaves
+   for it (68% to 98% across, 2% to 33.5% down the canvas). */
+.readout {
+  position: absolute;
+  left: 68%;
+  top: 2%;
+  width: 30%;
+  height: 31.5%;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 6px 8px;
+  background: rgba(16, 16, 32, 0.88);
+  border: 1px solid #2c2c48;
+  border-radius: 3px;
+  color: #d4c5a0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: clamp(8px, 1.35cqmin, 11px);
+  line-height: 1.45;
+  pointer-events: none;
+}
+.readout-title {
+  color: #e8d8b0;
+  font-size: 1.08em;
+  margin-bottom: 4px;
+}
+.readout-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin-bottom: 4px;
+}
+.readout-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 3px;
+  border-radius: 2px;
+}
+.readout-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.readout-label {
+  color: #9a8f78;
+}
+.readout-value {
+  color: #e8d8b0;
+  text-align: right;
+  white-space: nowrap;
+}
+.readout-note {
+  margin-top: 4px;
+  color: #9a90b0;
+  font-size: 0.9em;
+}
+
+/* A label in the top-left corner of one of the dashboard's panels. */
+.panel-label {
+  position: absolute;
+  color: #9a90b0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: clamp(8px, 1.3cqmin, 11px);
+  pointer-events: none;
+}
+
+/* The morph button, lit up while it's sweeping the shape slider. */
+.icon-btn.morph.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Lesson cards ────────────────────────────────────────────────────────── */
+
+.lesson {
+  flex-shrink: 0;
+  max-height: 48%;
+  display: flex;
+  flex-direction: column;
+  background: #101a26;
+  border-bottom: 1px solid #2a4a50;
+  color: #c8d6d4;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+}
+.lesson-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #1d3036;
+}
+.lesson-head .icon-btn:disabled { opacity: 0.3; cursor: default; }
+.lesson-number {
+  color: #4fd1c5;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.lesson-title {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  color: #e6f2f0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lesson-fold { color: #4fd1c5; font-weight: 400; }
+.lesson-body {
+  overflow-y: auto;
+  padding: 4px 14px 12px;
+  line-height: 1.5;
+}
+.lesson-body p { margin: 8px 0; }
+.lesson-math {
+  margin: 8px 0;
+  padding: 8px 10px;
+  background: #0a1218;
+  border-left: 2px solid #4fd1c5;
+  color: #a8e6df;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.lesson-body h4 {
+  margin: 10px 0 2px;
+  color: #4fd1c5;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.lesson-body ul { margin: 4px 0; padding-left: 18px; }
+.lesson-body li { margin: 3px 0; }
+.lesson-surgery {
+  color: #9fb4b1;
+  font-size: 12px;
+}
+.lesson-surgery strong { color: #c8d6d4; }
+
+/* The lesson card's button to put the lesson's original code back. */
+.lesson-reset {
+  order: 1;
+  background: none;
+  border: 1px solid #2a4a50;
+  border-radius: 10px;
+  color: #7fb8b1;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lesson-reset:hover { border-color: #4fd1c5; color: #e6f2f0; }
+.lesson-reset.confirm { border-color: #ff6b6b; color: #ffb3b3; }
+
+/* The timeline: a full-width row at the bottom of the control bar. */
+.timeline {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.timeline input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent);
+}
+.timeline .control-value { min-width: 7.5em; }
+
+/* Rename and delete the open drawing. */
+.library-buttons { display: inline-flex; gap: 4px; }
+.icon-btn:disabled { opacity: 0.35; cursor: default; }
+.icon-btn.delete.confirm {
+  width: auto;
+  padding: 0 8px;
+  border-color: #ff6b6b;
+  color: #ffb3b3;
+  font-size: 12px;
+}
+
+/* The line with the error, in the editor. */
+.cm-error-line { background: rgba(255, 80, 100, 0.16); box-shadow: inset 3px 0 0 #ff5a6e; }
+.error-box.clickable { cursor: pointer; }
+.error-box.clickable:hover { border-color: #ff7b8b; }
+.error-go { margin-left: 10px; color: #ff9fae; text-decoration: underline; }
+
+/* ── First-visit tip ─────────────────────────────────────────────────────── */
+
+.hint {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  background: var(--accent-soft);
+  border-bottom: 1px solid #3a3a5e;
+  color: #e8d8b0;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+}
+.hint span { flex: 1; }
+.hint strong { color: var(--accent); }
+.hint-close {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #c8bca0;
+  font-size: 14px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+.hint-close:hover { border-color: #3a3a5e; color: #f0e6cc; }
+
+/* ── Accessibility ───────────────────────────────────────────────────────── */
+
+/* A clear ring on whatever the keyboard has focused (not on mouse clicks). */
+:focus-visible {
+  outline: 2px solid var(--accent, #c9a85c);
+  outline-offset: 2px;
+}
+.cm-editor.cm-focused { outline: none; }
+
+/* People who ask for less motion get no animated transitions (the drawing
+   itself starts paused; see init in app.gleam). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Phones and narrow windows: one column ───────────────────────────────── */
+
+@media (max-width: 760px) {
+  .app {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  /* The picture first, as wide as the screen, then the code below it. */
+  .canvas-area {
+    order: -1;
+    flex: none;
+    height: auto;
+    overflow: visible;
+  }
+  .stage {
+    flex: none;
+    width: 100%;
+    height: 100vw;
+    max-height: 70vh;
+  }
+  .controls { margin: 8px; gap: 8px 10px; }
+  .controls .control { flex: 1 1 100%; }
+  .drawing-select { flex: 1 1 100%; min-width: 0; }
+  .code-col {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: none;
+    height: 75vh;
+    border-right: none;
+    border-top: 1px solid #3a3a5e;
+  }
+  .lesson { max-height: 55%; }
+  .app.code-hidden .code-col { display: none; }
+  .app-header { gap: 10px; }
+  .mode-tab { padding-left: 8px; padding-right: 8px; font-size: 13px; }
+  .hint { font-size: 12px; }
+  .readout { font-size: 9px; }
+  .home-cards { grid-template-columns: 1fr; }
+}
+
+/* Shown over the drawing while a heavy one computes in the background. */
+.computing {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(26, 26, 46, 0.9);
+  border: 1px solid #3a3a5e;
+  border-radius: 12px;
+  color: #e8d8b0;
+  font: 12px ui-monospace, "SF Mono", Menlo, monospace;
+  pointer-events: none;
+}
+.computing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: computing-pulse 0.9s ease-in-out infinite alternate;
+}
+@keyframes computing-pulse { from { opacity: 0.25; } to { opacity: 1; } }
